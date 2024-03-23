@@ -1,3 +1,4 @@
+import math
 from tkinter import *
 
 # ---------------------------- CONSTANTS ------------------------------- #
@@ -9,6 +10,7 @@ FONT_NAME = "Courier"
 WORK_MIN = 25
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 20
+reps = 1
 
 
 # ---------------------------- TIMER RESET ------------------------------- #
@@ -17,17 +19,32 @@ LONG_BREAK_MIN = 20
 
 # ---------------------------- COUNTDOWN MECHANISM ------------------------------- #
 def start_timer():
-    count_down(11)
+    work_min_sec = WORK_MIN * 60
+    short_break_sec = SHORT_BREAK_MIN * 60
+    long_break_sec = LONG_BREAK_MIN * 60
+    if reps % 8 == 0:
+        count_down(long_break_sec)
+        timer_label.config(text="Break", fg=RED)
+    elif reps % 2 == 0:
+        count_down(short_break_sec)
+        timer_label.config(text="Break", fg=PINK)
+    else:
+        count_down(work_min_sec)
+        timer_label.config(text="Work", fg=GREEN)
 
 
 def count_down(count):
-    count_min = round(count / 60)
-    count_sec = round(count % 60)
+    count_min = math.floor(count / 60)
+    count_sec = math.floor(count % 60)
     if count_sec < 10:
         count_sec = f"0{count_sec}"
     if count >= 0:
         canvas.itemconfig(timer_text, text=f"{count_min}:{count_sec}")
         window.after(1000, count_down, count - 1)
+    else:
+        global reps
+        reps += 1
+        start_timer()
 
 
 # ---------------------------- UI SETUP ------------------------------- #
